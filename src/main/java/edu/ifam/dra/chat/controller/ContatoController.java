@@ -1,7 +1,11 @@
 package edu.ifam.dra.chat.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,31 +16,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.ifam.dra.chat.model.Contato;
+import edu.ifam.dra.chat.service.ContatoService;
+
 @RequestMapping("/contato")
 @RestController
-
-
-
 public class ContatoController {
 
+	@Autowired
+	ContatoService contatoService;
+	
 	@GetMapping
-	List<Contato> getAll(){
-		return null;
+	ResponseEntity<List<Contato>> getContatos(){
+		List<Contato> contatos = contatoService.getContatos();
+		if(contatos.isEmpty())
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(contatos);
+		return ResponseEntity.ok(contatos);
 	}
+	
+	@GetMapping("/{id}")
+	ResponseEntity<Contato> getContato (@PathVariable int id) {
+		try {
+			return ResponseEntity.ok(contatoService.getContato(id));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Contato());
+		}
+	}
+	
 	
 	@PostMapping
-	Contato setContato(@RequestBody Contato contato) {
-		return null;
-			
+	ResponseEntity<Contato> setContato(@RequestBody Contato contato) {
+		contatoService.setContato(contato);
+		return ResponseEntity.created(null).body(contato);
 	}
 	
-	@PutMapping ("/id")
-	Contato setContato(@RequestBody Contato contato, @PathVariable Long id) {
-		return null;
+	@PutMapping("/{id}")
+	ResponseEntity<Contato> setContato(@RequestBody Contato contato, @PathVariable int id) {
+		try {
+			return ResponseEntity.accepted().body(contatoService.setContato(id, contato));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Contato());
+		}
 	}
 	
-	@DeleteMapping("/id")
-	void deleteContato(@PathVariable Long id) {
-		
+	@DeleteMapping("/{id}")
+	ResponseEntity<Contato> deleteContato(@PathVariable int id) {
+		try {
+			contatoService.deleteContato(id);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Contato());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Contato());
+		}
 	}
+	
 }
+	
