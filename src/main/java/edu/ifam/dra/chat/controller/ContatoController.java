@@ -50,7 +50,7 @@ public class ContatoController {
 	}
 	
 	@PutMapping("/{id}")
-	ResponseEntity<Contato> setContato(@RequestBody Contato contato, @PathVariable int id) {
+	ResponseEntity<Contato> setContato(@RequestBody Contato contato, @PathVariable Long id) {
 		try {
 			return ResponseEntity.accepted().body(contatoService.setContato(id, contato));
 		} catch (Exception e) {
@@ -59,7 +59,7 @@ public class ContatoController {
 	}
 	
 	@DeleteMapping("/{id}")
-	ResponseEntity<Contato> deleteContato(@PathVariable int id) {
+	ResponseEntity<Contato> deleteContato(@PathVariable Long id) {
 		try {
 			contatoService.deleteContato(id);
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Contato());
